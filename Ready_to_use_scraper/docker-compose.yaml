@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:14
+    container_name: scraper_database
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: linktextdb
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+  r_scraper:
+    build: .
+    container_name: r_scraper
+    command: Rscript Advanced_Scraper_Mine.r
+    restart: on-failure
+    depends_on:
+      - db
+
+volumes:
+  db_data:
